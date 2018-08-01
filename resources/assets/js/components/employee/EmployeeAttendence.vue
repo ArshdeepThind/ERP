@@ -1,0 +1,420 @@
+<template>
+  <div class="row">
+    <div class="col-xs-12">
+      <div v-if='showAlert'>
+        <alert :type="alertType">{{ alertText }}</alert>
+      </div>
+      <div class="box">
+        <div class="box-header">
+          <!-- ADD EVENT -->
+          <div class="box-title">
+           
+          </div>
+          <div class="box-tools">
+            <form class="form-inline" @submit.prevent="searchInput">
+              <div class="form-group">
+                <div class="input-group">
+                  <div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>
+                  <input type="text" v-model="searchQuery" class="form-control" id="exampleInputAmount" placeholder="Search" @keyup.delete="searchChanges">
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+          <!-- /.box-header -->
+        <div class="box-body table-responsive table-fixed">
+          <table class="table table-hover">
+            <tbody>
+                <tr>
+                  <th><input type="checkbox" value='1' @click="toggleAll()" v-model='isAll'></th>
+                  <th v-for="(cols,index) in gridColumns" @click="sortBy(cols)">
+                  {{ cols }} 
+                  <span class="arrow" 
+                    :class="sortOrder.field == cols ? sortOrder.order : 'asc'"
+                    v-if="escapeSort.indexOf(cols) < 0"></span>
+                  </th>
+                </tr>
+            </tbody>
+            <tbody  v-if="componentData.length">
+                <tr v-for="runningData in componentData">
+                  <th>
+                    <input type="checkbox" :value="runningData.id" v-model="multiSelection">
+                  </th>
+                  <td v-text="runningData.first_name"></td>
+                  <td v-text="runningData.last_name"></td>
+                  <td v-text="runningData.email"></td>
+                  <td v-text="runningData.phone_number"></td>
+                </tr>
+            </tbody>
+           <tbody  v-else>
+                <tr>
+                  <td colspan="6">No {{headline}} Available!</td>
+                </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="box-footer clearfix">
+              <ul class="pagination pagination-sm no-margin pull-left">
+                 <button type="button" class="btn btn-danger" 
+                          @click='updateAttendance()' title='Submit Attendance' 
+                          :disabled='multiSelection.length==0'>
+                          Submit Attendance
+                        </button>
+              </ul>
+              &nbsp;
+               &nbsp;
+              <ul class="pagination pagination-sm no-margin pull-left">
+                <button type="button" class="btn btn-danger" @click="create()" v-show='showAdd' :disabled='multiSelection.length==0'>Submit Remarks</button>
+              </ul>
+              
+              <ul class="pagination pagination-sm no-margin pull-right">
+                <li>
+                  <a href="javascript:void(0);" aria-label="Previous" @click="prevPage()"><span aria-hidden="true">&laquo;</span></a>
+                </li>
+                <li v-for="n in pagination.total_pages" 
+                  :class="{'active':pagination.current_page==n}">
+                  <a href="javascript:void(0);" @click="all(n)">{{ n }}</a>
+                </li>
+                <li>
+                  <a href="javascript:void(0);" aria-label="Next" @click="nextPage()">
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+              </ul>
+        </div>
+      </div>
+        <div class="modal fade" id="componentDataModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="componentDataModalLabel">Add Remarks</h5>
+              <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button> -->
+            </div>
+            <div class="modal-body">
+              <form @submit.prevent="isNotValidateForm" name="callback">
+                <div class="form-group">
+                  <label for="role-name" class="form-control-label">Remarks:</label>
+                  <input type="text" class="form-control" id="role-name" v-model='singleObj.remarks'>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" :disabled="isNotValidateForm" @click="update()" v-if="pupupMod=='edit'">Edit</button>
+              <button type="button" class="btn btn-primary" :disabled="isNotValidateForm" @click="store()" v-else>Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<style lang='sass'></style>
+<script>
+    import FunctionHelper from '../../helpers/FunctionHelper.js';
+    import ConfirmBox from '../../helpers/ConfirmBox.js';
+    let funcHelp= new FunctionHelper;
+    export default {
+        props:['headline'],
+        data(){
+            return {
+                componentData:[],
+                multiSelection:[],
+                isAll:"",
+                pagination:{},
+                singleObj:{remarks:String,ids:Object},
+                pupupMod:'add',
+                showAdd:false,
+                showAlert:false,
+                alertType:'',
+                alertText:'',
+                // Component
+                gridColumns:['first_name','last_name','email','phone_number'],
+                escapeSort:['phone_number'],
+                gridAction:[
+                    {title:'edit',fire:"edit"},
+                    {title:'delete',fire:"delete"},
+                    {title:'force',fire:"force"}
+                ],
+                searchQuery:'',
+                sortOrder:{field:'first_name',order:'asc'},
+
+                // Module Specific
+                roleSelected:'',
+                rolesList:[]
+            };
+        },
+        mounted() {
+            this.all();
+            this.showAdd=true;
+            $('#componentDataModal').on('hidden.bs.modal', ()=>this.resetSingleObj());
+            let cats=this.componentData;
+        },
+        methods:{
+            resetMultiSelection(){
+              this.multiSelection=[];
+              this.isAll="";
+            },
+            resetSingleObj(){
+              this.singleObj = {remarks:"",ids:""};
+            },
+            resetAlert(){
+              this.alertType='';
+              this.alertText='';
+              this.showAlert=false;
+            },
+            alertHandler(type,text,isShow){
+                this.alertType=type;
+                    this.alertText=text;
+                    this.showAlert=isShow;
+            },
+            toggleAll(){
+              if(this.isAll==true){
+                this.componentData.map((ele)=>{
+                  this.multiSelection.push(ele.id);
+                })
+              }
+              else{
+                this.componentData.map((ele)=>{
+                  this.multiSelection.pop(ele.id);
+                })
+              }
+            },
+            all(page=1){
+                this.resetAlert();
+                let uri=`/employee/employees?page=${page}&sort=${this.sortOrder.field}&order=${this.sortOrder.order}`;
+                this.$http.get(uri).then((response)=>{
+                    let res= response.data;
+                    if(res.status_code==200){
+                        this.componentData =res.data;
+                        this.pagination =res.paginator;
+                    }
+                })
+                .catch((error)=>{console.log(error)});
+            },
+            show(obj){
+                this.pupupMod='edit';
+                this.resetAlert();
+                this.singleObj=obj;
+                $('#componentDataModal').modal('show');
+            },
+            removeConfirm(obj){
+              let confirmBox = new ConfirmBox(this);
+              confirmBox
+                .removeBox(this.headline,`You will not be able to recover this ${this.headline}!`, obj);
+            },  
+            remove(obj){
+                this.resetAlert();
+                var index = this.componentData.indexOf(obj);
+                this.componentData.splice(index, 1);
+                let uri=`/admin/administrator/${obj.id}`;
+                this.$http.delete(uri).then((response)=>{
+                    let res= response.data;
+                    if(res.status_code==200){
+                      // Handling alert
+                      this.alertHandler('success',res.message,true);
+                    }
+                    else{
+                      this.alertHandler('error',res.message,true); 
+                    }
+                })
+                .catch((error)=>{console.log(error)});
+            },
+            updateAttendance(){
+              let confirmBox = new ConfirmBox(this);
+              confirmBox
+                .bulkUpdateBox(this.headline,`Are you sure you want to update attendance for selected employees ?`);
+            },
+
+            removeMultiple(){
+                this.resetAlert();
+                let uri=`/admin/administrator/removeBulk`;
+                if(this.multiSelection.length){
+                  this.$http.post(uri,this.multiSelection).then((response)=>{
+                      let res= response.data;
+                      if(res.status_code==200){
+                        // Handling alert
+                        this.resetMultiSelection();
+                        this.all();
+                        this.alertHandler('success',res.message,true);
+                      }
+                      else{
+                        this.alertHandler('error',res.message,true); 
+                      }
+                  })
+                  .catch((error)=>{console.log(error)});
+                }
+            },
+            updateMultiple(){
+              // alert("test");
+              this.resetAlert();
+                let uri=`/employee/employees/updateBulk`;
+                if(this.multiSelection.length){
+                  this.$http.put(uri,this.multiSelection).then((response)=>{
+                      let res= response.data;
+                      if(res.status_code==200){
+                        // Handling alert
+                        this.resetMultiSelection();
+                        this.all();
+                        this.alertHandler('success',res.message,true);
+                      }
+                      else{
+                        this.alertHandler('error',res.message,true); 
+                      }
+                  })
+                  .catch((error)=>{console.log(error)});
+                }
+            },
+            update(){
+                let uri=`/employee/employee/${this.singleObj.id}`;
+                this.$http.put(uri,this.singleObj).then((response)=>{
+                    let res= response.data;
+                    if(res.status_code==200){
+                      // Handling alert
+                      this.alertHandler('success',res.message,true);
+                    }
+                    else{
+                      this.alertHandler('error',res.message,true); 
+                    }
+                    $('#componentDataModal').modal('hide');
+                })
+                .catch((error)=>{});
+            },
+            create(){
+                this.resetSingleObj();
+                this.resetAlert();
+                this.pupupMod='add';
+                $('#componentDataModal').modal('show');
+            },
+            store(){
+                // this.categories.push(this.singleObj);
+
+                
+                if(this.multiSelection.length){
+                  this.singleObj.ids = this.multiSelection; 
+                this.$http.post('/employee/employees/storeRemarks',this.singleObj).then((response)=>{
+                    let res=response.data;
+                    if(res.status_code==201){
+                        this.resetSingleObj(); // reset store input form
+                        this.all(); // fetch updated list
+                        this.resetMultiSelection();
+                        $('#componentDataModal').modal('hide'); // Hide modal
+                        // Handling alert
+                        this.alertHandler('success',res.message,true);
+                    }
+                    else{
+                      this.alertHandler('error',res.message,true);
+                    }
+                })
+                .catch((error)=>{console.log(error)});
+            }
+          },
+            switchStatus(obj){
+              this.resetAlert();
+              let newStat=(obj.status=='active')?'inactive':'active';
+              let uri=`/admin/administrator/status`;
+              this.$http.put(uri,obj).then((response)=>{
+                  let res= response.data;
+                  if(res.status_code==200){
+                    // Handling alert
+                     obj.status=newStat;
+                    this.alertHandler('success',res.message,true);
+                  }
+                  $('#componentDataModal').modal('hide');
+              })
+              .catch((error)=>{});
+            },
+            switchStatusBulkConfirm(){
+              let confirmBox = new ConfirmBox(this);
+              confirmBox
+                .bulkStatusBox(this.headline,`You will be able to restore selected ${this.headline} state!`);
+            },
+            switchStatusSelected(){
+              this.resetAlert();
+              let uri=`/admin/administrator/statusBulk`;
+              this.$http.put(uri,this.multiSelection).then((response)=>{
+                  let res= response.data;
+                  if(res.status_code==200){
+                    this.all();
+                    this.resetMultiSelection();
+                    // Handling alert
+                    this.alertHandler('success',res.message,true);
+                  }
+              })
+              .catch((error)=>{});
+            },
+
+            // Pagination scoping
+            nextPage(){
+                let pagination=this.pagination;
+                if(pagination.current_page < pagination.total_pages){
+                    let reqPage=pagination.current_page+1;
+                    this.all(reqPage);
+                }
+            },
+            prevPage(){
+                let pagination=this.pagination;
+                if(pagination.current_page > 1){
+                    let reqPage=pagination.current_page - 1;
+                    this.all(reqPage);
+                }
+            },
+            sortBy(cols){
+              if(this.escapeSort.indexOf(cols) < 0 ){
+                if(cols == this.sortOrder.field){
+                    this.sortOrder.order= (this.sortOrder.order=='asc')? 'desc':'asc';
+                }
+                else{
+                    this.sortOrder= {field:cols,order:'asc'} ; 
+                }
+                this.all(this.pagination.current_page);
+              }
+            },
+            searchInput(){
+                let searchQuery=this.searchQuery;
+                let uri=`/admin/administrator?searchQuery=${searchQuery}&sort=${this.sortOrder.field}&order=${this.sortOrder.order}`;
+                this.$http.get(uri).then((response)=>{
+                    let res= response.data;
+                    if(res.status_code==200){
+                        this.componentData =res.data;
+                        this.pagination =res.paginator;
+                    }
+                })
+                .catch((error)=>{console.log(error)});
+            },
+            searchChanges(){
+                let searchQuery=this.searchQuery;
+                if(searchQuery==""){
+                    this.all();
+                }
+            },
+            // Module Specific
+            roles(){
+                let uri=`/admin/roles/all`;
+                this.$http.get(uri).then((response)=>{
+                    let res= response.data;
+                    if(res.status_code==200){
+                        this.rolesList=res.data;
+                    }
+                })
+                .catch((error)=>{console.log(error)});
+            },
+        },
+        computed:{
+            isNotValidateForm(){
+                if(this.singleObj.remarks=="" )
+                {
+                    return true;
+                }
+                return false;
+            }
+        },
+        filters: {
+            capitalize(str) {
+              return str.charAt(0).toUpperCase() + str.slice(1)
+            }
+        }
+    }
+</script>

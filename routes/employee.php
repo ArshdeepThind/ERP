@@ -1,55 +1,52 @@
 <?php
 
-Route::get('/home', function () {
-    $users[] = Auth::user();
-    $users[] = Auth::guard()->user();
-    $users[] = Auth::guard('employee')->user();
-
-    //dd($users);
-    $pass['usercount'] = 2;
-
-    return view('employee.home')->with($pass);
-})->name('home');
 
 
+Route::get('/home', "Employee\DashController@index")->name('home');
 
-//Administrator
-Route::get('/profile',"Employee\AdminController@profileEdit");
-Route::put('/profile/{employee}',"Employee\AdminController@profileUpdate");
-Route::put('/changepassword/{employee}',"Employee\AdminController@changePassword");
-Route::put('/administrator/status',"Employee\AdminController@switchStatus");
-Route::post('/administrator/removeBulk',"Employee\AdminController@destroyBulk");
-Route::put('/administrator/statusBulk',"Employee\AdminController@switchStatusBulk");
-Route::resource('/administrator',"Employee\AdminController");
+//Employee
+Route::get('/profile',"Employee\EmployeeController@profileEdit");
+Route::put('/profile/{employee}',"Employee\EmployeeController@profileUpdate");
+Route::put('/changepassword/{employee}',"Employee\EmployeeController@changePassword");
+//Employees
+Route::put('/leaves/approve',"Employee\EmployeeController@switchstatus");
+Route::get('/leaves/unapprovedleaves',"Employee\EmployeeController@unapprovedleaves")->name('unapprovedleaves');
 
-//users
+Route::post('/applyleave',"Employee\EmployeeController@applyleave");
+Route::get('/leaves',"Employee\EmployeeController@leaves");
+Route::get('/allleaves',"Employee\EmployeeController@allleaves");
+Route::get('/showallleaves/{id}',"Employee\EmployeeController@showallleaves");
 
-Route::put('/users/verify',"Employee\UsersController@switchVerification");
-Route::put('/users/status',"Employee\UsersController@switchStatus");
-Route::get('/users/fetchData/{id}',"Employee\UsersController@fetchData");
-Route::post('/users/removeBulk',"Employee\UsersController@destroyBulk");
-Route::put('/users/statusBulk',"Employee\UsersController@switchStatusBulk");
-Route::resource('/users',"Employee\UsersController");
+Route::put('/employees/updateBulk',"Employee\EmployeeController@updateBulk");
+Route::post('/employees/storeRemarks',"Employee\EmployeeController@storeRemarks");
+Route::get('/employees/cases/{id}',"Employee\EmployeeController@cases");
 
-//Pages
+Route::get('/employees/fetchData/{id}',"Employee\EmployeeController@fetchData");
+Route::resource('/employees',"Employee\EmployeeController");
 
-Route::put('/pages/status',"Employee\PagesController@switchStatus");
-Route::post('/pages/removeBulk',"Employee\PagesController@destroyBulk");
-Route::put('/pages/statusBulk',"Employee\PagesController@switchStatusBulk");
-Route::resource('/pages',"Employee\PagesController");
+//Payment
+Route::get('/attendence',"Employee\EmployeeController@showattendence")->name('attendence');
 
-/**
- * ROLES
- */
-Route::get('/role/{role}/permissions',"Employee\RoleController@permissions");
-Route::get('/rolePermissions',"Employee\RoleController@rolePermissions")->name('myrolepermission');
-Route::get('/roles/all',"Employee\RoleController@all");
-Route::post('/assignPermission','Employee\RoleController@attachPermission');
-Route::post('/detachPermission','Employee\RoleController@detachPermission');
-Route::resource('/roles',"Employee\RoleController");
+Route::get('/payment/showpayslip/{id}',"Employee\PaymentController@showpayslip");
+Route::get('/payment/paymenthistory/{id}',"Employee\PaymentController@paymenthistory");
+Route::put('/payment/changestatus',"Employee\PaymentController@changestatus");
+Route::resource('/payment',"Employee\PaymentController");
 
-/**
- * PERMISSIONs
- */
-Route::get('/permissions/all',"Employee\PermissionController@all");
-Route::resource('/permissions',"Employee\PermissionController");
+
+//Jobs
+Route::get('/job/departments/',"Employee\JobController@fetchDepartments");
+Route::resource('/job',"Employee\JobController");
+
+Route::get('/chat/cases/{id}',"Employee\ChatController@cases");
+Route::get('/chat/{id?}',"Employee\ChatController@index")->name('chatlist');
+Route::resource('/chat',"Employee\ChatController");
+
+Route::resource('/settings',"Employee\SettingsController");
+
+
+//Inventory
+
+
+Route::resource('/products',"Employee\InventoryController");
+Route::resource('/supplier',"Employee\SupplierController");
+Route::resource('/orders',"Employee\OrderController");

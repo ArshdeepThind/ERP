@@ -1,4 +1,4 @@
-@extends('admin.layout.master')
+@extends('employee.layout.master')
 
 @section('content')
 
@@ -23,10 +23,10 @@ if (session()->has('mode'))
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <h1>
-            {{ ucwords(auth()->user()->name) }} Profile
+            {{ ucwords(auth()->user()->first_name) }} Profile
         </h1>
         <ol class="breadcrumb">
-            <li><a href="{{ url('/admin') }}"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="{{ url('/employee') }}"><i class="fa fa-dashboard"></i> Home</a></li>
             <li class="active">User profile</li>
         </ol>
     </section>
@@ -44,7 +44,7 @@ if (session()->has('mode'))
                         {{-- Admin Profile --}}
                         <div class="{{ $mode=='pf'?'active':'' }} tab-pane" id="admin-profile">
                             <form class="form-horizontal" role="form" method="POST" 
-                                action="{{ url('/admin/profile/'.auth()->user()->id) }}" enctype="multipart/form-data">
+                                action="{{ url('/employee/profile/'.auth()->user()->id) }}" enctype="multipart/form-data">
                                 {{method_field('PUT')}}
                                 {{ csrf_field() }}
 
@@ -52,7 +52,7 @@ if (session()->has('mode'))
                                 <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
                                     <label for="name" class="col-md-3 control-label">Name</label>
                                     <div class="col-md-7">
-                                        <input id="name" type="text" class="form-control" name="name" value="{{ auth()->user()->name }}" autofocus>
+                                        <input id="name" type="text" class="form-control" name="name" value="{{ auth()->user()->first_name }}" autofocus>
 
                                         @if ($errors->has('name'))
                                             <span class="help-block">
@@ -101,7 +101,7 @@ if (session()->has('mode'))
                         {{-- Change Password --}}
                         <div class="{{ $mode=='cp'?'active':'' }} tab-pane" id="admin-changepassword">
                             <form class="form-horizontal" role="form" method="POST" 
-                                action="{{ url('/admin/changepassword/'.auth()->user()->id) }}" enctype="multipart/form-data">
+                                action="{{ url('/employee/changepassword/'.auth()->user()->id) }}" enctype="multipart/form-data">
                                 {{method_field('PUT')}}
                                 {{ csrf_field() }}
 

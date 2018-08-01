@@ -1,23 +1,22 @@
 @extends('employee.layout.auth')
-
 @section('content')
-<div class="container">
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2">
-            <div class="panel panel-default">
-                <div class="panel-heading">Reset Password</div>
-
-                <div class="panel-body">
-                    <form class="form-horizontal" role="form" method="POST" action="{{ url('/employee/password/reset') }}">
+        <div class="login-box">
+            <!-- /.login-logo -->
+            <div class="login-header text-center">
+                <h2><b>RESET PASSWORD</b></h2>
+            </div>
+                   
+            <component is='auth-validate' inline-template>
+                <div class="login-box-body">
+                    <h4 class="content-group">PASSWORD RESET FORM</h4>
+                    <form role="form" method="POST" action="{{ url('/employee/password/reset') }}">
                         {{ csrf_field() }}
 
                         <input type="hidden" name="token" value="{{ $token }}">
+                        <div class="row form-group{{ $errors->has('email') ? ' has-error' : '' }}">
 
-                        <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
-                            <label for="email" class="col-md-4 control-label">E-Mail Address</label>
-
-                            <div class="col-md-6">
-                                <input id="email" type="email" class="form-control" name="email" value="{{ $email or old('email') }}" autofocus>
+                            <div class="col-md-12">
+                                <input id="email" placeholder="Email" type="email" class="form-control" name="email" value="{{ $email or old('email') }}" autofocus>
 
                                 @if ($errors->has('email'))
                                     <span class="help-block">
@@ -27,11 +26,10 @@
                             </div>
                         </div>
 
-                        <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
-                            <label for="password" class="col-md-4 control-label">Password</label>
+                        <div class="row form-group{{ $errors->has('password') ? ' has-error' : '' }} input-with-icon">
 
-                            <div class="col-md-6">
-                                <input id="password" type="password" class="form-control" name="password">
+                            <div class="col-md-12">
+                                <input id="password" placeholder="Password" type="password" class="form-control" name="password">
 
                                 @if ($errors->has('password'))
                                     <span class="help-block">
@@ -41,10 +39,9 @@
                             </div>
                         </div>
 
-                        <div class="form-group{{ $errors->has('password_confirmation') ? ' has-error' : '' }}">
-                            <label for="password-confirm" class="col-md-4 control-label">Confirm Password</label>
-                            <div class="col-md-6">
-                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation">
+                    <div class="row form-group{{ $errors->has('password_confirmation') ? ' has-error' : '' }} input-with-icon">
+                            <div class="col-md-12">
+                                <input id="password-confirm" placeholder="Confirm Password" type="password" class="form-control" name="password_confirmation">
 
                                 @if ($errors->has('password_confirmation'))
                                     <span class="help-block">
@@ -52,19 +49,19 @@
                                     </span>
                                 @endif
                             </div>
-                        </div>
+                    </div>
 
-                        <div class="form-group">
-                            <div class="col-md-6 col-md-offset-4">
-                                <button type="submit" class="btn btn-primary">
-                                    Reset Password
-                                </button>
+                       
+                        <div class="row">     
+                            <div class="col-xs-12">
+                                  <button type="submit" class="btn btn-danger btn-block btn-material">RESET PASSWORD</button>
                             </div>
                         </div>
                     </form>
+                    <!-- /.social-auth-links -->
+                    
                 </div>
-            </div>
+            </component>
+            <!-- /.login-box-body -->
         </div>
-    </div>
-</div>
 @endsection

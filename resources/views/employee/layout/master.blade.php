@@ -11,7 +11,7 @@
     <title>{{ config('app.name', 'Laravel Employee') }}</title>
 
     <link rel='shortcut icon' type='image/x-icon' href='{{ asset('/images/favicon.ico') }}' />
-    <link href="/css/admin-app.css" rel="stylesheet">
+    <link href="/css/employee-app.css" rel="stylesheet">
 
     
     <link rel="stylesheet" href="{{ asset('/plugins/iCheck/square/blue.css') }}">
@@ -20,9 +20,11 @@
 
     <!-- Scripts -->
     <script>
-        window.Laravel = <?php echo json_encode([
+        window.Laravel = <?php 
+        echo json_encode([
             'csrfToken' => csrf_token(),
-        ]); ?>
+            'login_user_id' => auth()->user()->id
+        ]); ?>;
 
     </script>
 </head>
@@ -36,13 +38,45 @@
             @yield('content')
         </div>
 
+        
         <div id="loader_logo" style="background-image: url('/images/loader_logo.gif');"></div>
     </div>
+
+    <!-- Scripts -->     
+
+
     
-    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/4.13.0/firebase.js"></script>
+    <script>
+            
+     var config = {
+        apiKey: "AIzaSyCLlBNpd0PG61yMWBBnhQk0j5afj6S7onE",
+        authDomain: "erpsystem-2f85e.firebaseapp.com",
+        databaseURL: "https://erpsystem-2f85e.firebaseio.com",
+        projectId: "erpsystem-2f85e",
+        storageBucket: "erpsystem-2f85e.appspot.com",
+        messagingSenderId: "136245962846"
+      };
+      
+    firebase.initializeApp(config);
+    var database = firebase.database();    
+
+    </script>   
+
     <script src="/js/app.js"></script>
     <script src="/js/admin-app.js"></script>
     <script src="/js/admin-main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.js"></script> 
+    <script type="text/javascript">
+    $(document).ready(function () {
+        $().fancybox({
+            selector : '[data-fancybox="image_gallery"]',
+            loop    : true
+        });
+    });
+    </script>  
+
+   
    
     @yield('js')
 </body>

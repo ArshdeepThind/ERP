@@ -23,20 +23,8 @@ Route::put('/administrator/statusBulk',"Admin\AdminController@switchStatusBulk")
 Route::resource('/administrator',"Admin\AdminController");
 
 //users
-
-Route::put('/users/verify',"Admin\UsersController@switchVerification");
-Route::put('/users/status',"Admin\UsersController@switchStatus");
-Route::get('/users/fetchData/{id}',"Admin\UsersController@fetchData");
-Route::post('/users/removeBulk',"Admin\UsersController@destroyBulk");
-Route::put('/users/statusBulk',"Admin\UsersController@switchStatusBulk");
 Route::resource('/users',"Admin\UsersController");
 
-//Pages
-
-Route::put('/pages/status',"Admin\PagesController@switchStatus");
-Route::post('/pages/removeBulk',"Admin\PagesController@destroyBulk");
-Route::put('/pages/statusBulk',"Admin\PagesController@switchStatusBulk");
-Route::resource('/pages',"Admin\PagesController");
 
 /**
  * ROLES

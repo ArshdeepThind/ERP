@@ -1,7 +1,7 @@
 <header class="main-header">
   <!-- Logo -->
   <a href="{{ url('/employee') }}" class="logo">
-    <span class="logo-lg">Laravel : Employee</span>
+    <span class="logo-lg">ERP SYSTEM</span>
   </a>
   <!-- Header Navbar: style can be found in header.less -->
   <nav class="navbar navbar-static-top">
@@ -22,7 +22,7 @@
         @if(Auth::user()->pic=='')
           <img src="{{ asset('storage/avatar.png') }}" class="user-image" alt="User Image">
         @else
-          <img src="{{ asset('storage/'.Auth::user()->pic) }}" class="user-image" alt="User Image">
+          <img src="{{ asset('storage/employee/'.Auth::user()->id.'/'.Auth::user()->pic) }}" class="user-image" alt="User Image">
         @endif
 
           
@@ -34,10 +34,10 @@
               @if(Auth::user()->pic=='')
                 <img src="{{ asset('storage/avatar.png') }}" class="img-circle" alt="User Image">
               @else
-                <img src="{{ asset('storage/'.Auth::user()->pic) }}" class="img-circle" alt="User Image">
+                <img src="{{ asset('storage/employee/'.Auth::user()->id.'/'.Auth::user()->pic) }}" class="img-circle" alt="User Image">
               @endif
               <p>
-                {{ ucwords(Auth::user()->name) }}
+                {{ ucwords(Auth::user()->first_name) }}
                 <small>{{ Auth::user()->email }}</small>
               </p>
             </li>

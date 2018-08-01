@@ -2,7 +2,7 @@
 
 Hi {{$firstname}},
 
-Thanks for signing up to keep in touch with Weil Organisation. From now on, you will get regular updates. 
+Thanks for joing ERP organization. From now on, you will get regular updates. 
 
 Login Credentials are as below:
 

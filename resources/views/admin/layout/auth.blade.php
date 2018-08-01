@@ -8,7 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel Admin') }}</title>
+    <title>{{ config('app.name', 'ERP') }}</title>
 
     <link rel='shortcut icon' type='image/x-icon' href='{{ asset('/images/favicon.ico') }}' />
 
@@ -24,9 +24,9 @@
     </script>
 </head>
 <body class="hold-transition login-page">
-  <div id="app">
-    @yield('content')
-</div>
+    <div id="app">
+        @yield('content')
+    </div>
     <!-- Scripts -->  
     <script src="/js/app.js"></script>
     <script src="/js/admin-app.js"></script>

@@ -30,6 +30,10 @@ require('../../../public/plugins/datepicker/bootstrap-datepicker.js');
 window.axios = require('axios');
 
 
+window.Highcharts = require('highcharts');
+require('highcharts/modules/exporting')(Highcharts);
+
+
 
 window.axios.defaults.headers.common['X-CSRF-TOKEN'] = window.Laravel.csrfToken;
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';

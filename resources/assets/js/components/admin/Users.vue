@@ -7,22 +7,6 @@
       <div class="box">
           <div class="box-header">
             <div class="box-title">
-                  <div class="pull-right group-actions">
-                        <button type="button" class="btn btn-danger" 
-                          @click='removeBulkConfirm()' title='Delete Selected' 
-                          :disabled='multiSelection.length==0'>
-                          <i class='fa fa-trash-o' ></i>
-                        </button>
-                        <button type="button" class="btn btn-primary" 
-                          @click='switchStatusBulkConfirm()' title='Change Status' 
-                          :disabled='multiSelection.length==0'>
-                          <i class='fa fa-exchange' ></i>
-                        </button>
-                       
-                  </div>
-                  <transition name="custom-classes-transition" enter-active-class="animated tada" leave-active-class="animated bounceOutRight">
-                      <a class="btn btn-default pull-right" href='users/create' v-show='showAdd'>New</a>
-                  </transition>
             </div>
             <div class="box-tools">
                 <form class="form-inline" @submit.prevent="searchInput">
@@ -40,7 +24,6 @@
               <table class="table table-hover">
                <tbody>
                 <tr>
-                  <th><input type="checkbox" value='1' @click="toggleAll()" v-model='isAll'></th>
                   <th v-for="(cols,index) in gridColumns" @click="sortBy(cols)">
                   {{ cols }} 
                   <span class="arrow" 
@@ -51,40 +34,15 @@
                 </tbody>
                 <tbody  v-if="componentData.length">
                   <tr v-for="runningData in componentData">
-                    <th>
-                      <input type="checkbox" :value="runningData.id" v-model="multiSelection">
-                    </th>
-                    <td v-text="runningData.firstname"></td>
-                    <td v-text="runningData.lastname"></td>
+                    <td v-text="runningData.first_name"></td>
+                    <td v-text="runningData.last_name"></td>
                     <td v-text="runningData.email"></td>
-                    <td v-text="runningData.phone"></td>
-                    <td>${{runningData.total}}</td>
-                    <td v-if = "runningData.is_verified==1">
-                      <span class="glyphicon glyphicon-ok" style="color:#bfb485"></span>
-                    </td>
-                    <td v-else>
-                      <button class="btn btn-danger" 
-                        @click="switchVerification(runningData)">
-                        Click to verify
-                      </button>
-                    </td>
-                    <td v-if="runningData.status==1">
-                      <button class="btn btn-primary" @click="switchStatus(runningData)">
-                        Active
-                      </button>
-                    </td>
-                    <td v-else>
-                      <button class="btn btn-danger" @click="switchStatus(runningData)">
-                        Inactive
-                      </button>
-                    </td>
+                    <td v-text="runningData.phone_number"></td>
+                    <td v-text="runningData.current_salary"></td>
                     <td>
                     <div class="" role="group" aria-label="...">
-                       <a type="button" class="btn btn-primary btn-round" :href="'users/'+runningData.id+'/edit'">
-                         <i class="fa fa-pencil-square-o"></i>
-                       </a>
-                       <a type="button" class="btn btn-danger btn-round" @click="removeConfirm(runningData)">
-                         <i class='fa fa-trash-o'></i>
+                       <a type="button" class="btn btn-danger btn-round" @click="create(runningData)">
+                         Assign Role
                        </a>
                     </div>
                   </td>
@@ -114,6 +72,35 @@
               </ul>
           </div>
       </div>
+
+       <div class="modal fade" id="componentDataModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="componentDataModalLabel">{{pupupMod | capitalize}} {{headline}} : {{singleObj.name }}</h5>
+              <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button> -->
+            </div>
+            <div class="modal-body">
+              <form @submit.prevent="isNotValidateForm" name="callback">
+                <div class="form-group">
+                  <label>Assign Role</label>
+                  <select v-model="singleObj.inrole" class="form-control">
+                    <option v-for="role in rolesList" v-bind:value="role.name">
+                      {{ role.name | capitalize }}
+                    </option>
+                  </select>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" :disabled="isNotValidateForm" @click="update()" v-if="pupupMod=='edit'">Edit</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -130,6 +117,7 @@
                 componentData:[],
                 multiSelection:[],
                 isAll:"",
+                singleObj:{id:Number,name:String,inrole:String},
                 pagination:{},
                 pupupMod:'add',
                 showAdd:false,
@@ -137,19 +125,22 @@
                 alertType:'',
                 alertText:'',
                 // Component
-                gridColumns:['Firstname','Lastname','Email','Phone','Total Balance','Verified','Status','Action'],
-                escapeSort:['Total Balance','Verified','Action','Phone'],
+                gridColumns:['first_name','last_name','email','phone','current salary','action'],
+                escapeSort:['current salary','action','phone'],
                 gridAction:[
                     {title:'edit',fire:"edit"},
                     {title:'delete',fire:"delete"},
                     {title:'force',fire:"force"}
                 ],
                 searchQuery:'',
-                sortOrder:{field:'firstname',order:'asc'},
+                sortOrder:{field:'first_name',order:'asc'},
+                roleSelected:'',
+                rolesList:[]
             };
         },
         mounted() {
             this.all();
+            this.roles();
             this.showAdd=true;
         },
         methods:{
@@ -166,6 +157,9 @@
                 this.alertType=type;
                     this.alertText=text;
                     this.showAlert=isShow;
+            },
+            resetSingleObj(){
+                this.singleObj={id:"",name:"",inrole:""}; 
             },
             toggleAll(){
               if(this.isAll==true){
@@ -193,100 +187,6 @@
                 })
                 .catch((error)=>{console.log(error)});
             },
-            removeConfirm(obj){
-              let confirmBox = new ConfirmBox(this);
-              confirmBox
-                .removeBox(this.headline,`You will not be able to recover this ${this.headline}!`, obj);
-            },
-            remove(obj){
-                this.resetAlert();
-                var index = this.componentData.indexOf(obj);
-                this.componentData.splice(index, 1);
-                let uri=`/admin/users/${obj.id}`;
-                this.$http.delete(uri).then((response)=>{
-                    let res= response.data;
-                    if(res.status_code==200){
-                      // Handling alert
-                      this.alertHandler('success',res.message,true);
-                    }
-                    else{
-                      this.alertHandler('error',res.message,true); 
-                    }
-                })
-                .catch((error)=>{console.log(error)});
-            },
-            removeBulkConfirm(){
-              let confirmBox = new ConfirmBox(this);
-              confirmBox
-                .bulkRemoveBox(this.headline,`You will not be able to recover selected ${this.headline}!`);
-            },
-            removeMultiple(){
-                this.resetAlert();
-                let uri=`/admin/users/removeBulk`;
-                if(this.multiSelection.length){
-                  this.$http.post(uri,this.multiSelection).then((response)=>{
-                      let res= response.data;
-                      if(res.status_code==200){
-                        // Handling alert
-                        this.all();
-                        this.resetMultiSelection();
-                        this.alertHandler('success',res.message,true);
-                      }
-                      else{
-                        this.alertHandler('error',res.message,true); 
-                      }
-                  })
-                  .catch((error)=>{console.log(error)});
-                }
-            },
-            switchStatus(obj){
-              this.resetAlert();
-              let newStat=(obj.status==1)?0:1;
-              let uri=`/admin/users/status`;
-              this.$http.put(uri,obj).then((response)=>{
-                  let res= response.data;
-                  if(res.status_code==200){
-                    // Handling alert
-                    obj.status=newStat;
-                    this.alertHandler('success',res.message,true);
-                  }
-              })
-              .catch((error)=>{});
-            },
-            switchStatusBulkConfirm(){
-              let confirmBox = new ConfirmBox(this);
-              confirmBox
-                .bulkStatusBox(this.headline,`You will be able to restore selected ${this.headline} state!`);
-            },
-            switchStatusSelected(){
-              this.resetAlert();
-              let uri=`/admin/users/statusBulk`;
-              this.$http.put(uri,this.multiSelection).then((response)=>{
-                  let res= response.data;
-                  if(res.status_code==200){
-                    this.all();
-                    this.resetMultiSelection();
-                    // Handling alert
-                    this.alertHandler('success',res.message,true);
-                  }
-              })
-              .catch((error)=>{});
-            },
-            switchVerification(obj){
-              this.resetAlert();
-              let newStat=(obj.is_verified==1)?0:1;
-              let uri=`/admin/users/verify`;
-              this.$http.put(uri,obj).then((response)=>{
-                  let res= response.data;
-                  if(res.status_code==200){
-                    // Handling alert
-                     obj.is_verified=newStat;
-                    this.alertHandler('success',res.message,true);
-                  }
-              })
-              .catch((error)=>{});
-            },
-
             // Pagination scoping
             nextPage(){
                 let pagination=this.pagination;
@@ -330,10 +230,48 @@
                 if(searchQuery==""){
                     this.all();
                 }
+            },create(obj){
+                this.pupupMod='edit';
+                this.resetAlert();
+                this.singleObj=obj;
+                $('#componentDataModal').modal('show');
+            },
+            roles(){
+                let uri=`/admin/roles/all`;
+                this.$http.get(uri).then((response)=>{
+                    let res= response.data;
+                    if(res.status_code==200){
+                        this.rolesList=res.data;
+                    }
+                })
+                .catch((error)=>{console.log(error)});
+            },
+            update(){
+                let uri=`/admin/users/${this.singleObj.id}`;
+                this.$http.put(uri,this.singleObj).then((response)=>{
+                    let res= response.data;
+                    if(res.status_code==200){
+                      // Handling alert
+                      this.alertHandler('success',res.message,true);
+                    }
+                    else{
+                      this.alertHandler('error',res.message,true); 
+                    }
+                    $('#componentDataModal').modal('hide');
+                })
+                .catch((error)=>{});
             },
             
         },
-        computed:{},
+        computed:{
+          isNotValidateForm(){
+                if(this.singleObj.inrole=="")
+                {
+                    return true;
+                }
+                return false;
+          }
+        },
         filters: {
             capitalize(str) {
               return str.charAt(0).toUpperCase() + str.slice(1)

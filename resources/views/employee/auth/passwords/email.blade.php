@@ -2,46 +2,49 @@
 
 <!-- Main Content -->
 @section('content')
-<div class="container">
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2">
-            <div class="panel panel-default">
-                <div class="panel-heading">Reset Password</div>
-                <div class="panel-body">
-                    @if (session('status'))
-                        <div class="alert alert-success">
-                            {{ session('status') }}
-                        </div>
-                    @endif
-
-                    <form class="form-horizontal" role="form" method="POST" action="{{ url('/employee/password/email') }}">
-                        {{ csrf_field() }}
-
-                        <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
-                            <label for="email" class="col-md-4 control-label">E-Mail Address</label>
-
-                            <div class="col-md-6">
-                                <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}">
-
-                                @if ($errors->has('email'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('email') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-md-6 col-md-offset-4">
-                                <button type="submit" class="btn btn-primary">
-                                    Send Password Reset Link
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+        
+        <div class="login-box">
+            <!-- /.login-logo -->
+            <div class="login-header text-center">
+                <h2><b>RESET PASSWORD</b></h2>
             </div>
+                   
+            
+            <div class="login-box-body">
+                <h4 class="content-group">Enter Email to Reset Password</h4>
+                <form role="form" method="POST" action="{{ url('/employee/password/email') }}">
+                    {{ csrf_field() }}
+                    <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }} input-with-icon " >
+                        <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" autofocus placeholder="Username (Email)" v-model="email">
+                          <div class="form-control-feedback">
+                            <i class="fa fa-envelope text-muted"></i>
+                          </div>
+                        @if ($errors->has('email'))
+                            <span class="help-block">
+                                <strong>{{ $errors->first('email') }}</strong>
+                            </span>
+                        @endif
+                    </div>
+
+                    <div class="row">                            
+                        <div class="col-xs-6"></div>
+                    <div class="col-xs-6">
+                                <a class="btn btn-link pull-right" href="{{ url('/employee') }}">
+                                    Back to login
+                                </a> 
+                    </div>
+                    </div>
+
+                    <div class="row">     
+                        <div class="col-xs-12">
+                              <button type="submit" class="btn btn-danger btn-block btn-material">Send Password Reset Link</button>
+                        </div>
+                    </div>
+                </form>
+                <!-- /.social-auth-links -->
+                
+            </div>
+      
+            <!-- /.login-box-body -->
         </div>
-    </div>
-</div>
 @endsection

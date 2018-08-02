@@ -15869,20 +15869,13 @@ th.active .arrow {
   border-top: 4px solid #424242;
 }
 
-html,
-body {
-  /* background-color: #fff;
-    color: #636b6f;
-    font-family: 'Raleway', sans-serif;
-    font-weight: 100;
-    height: 100vh;
-    margin: 0; */
+body.login-page {
+  background-color: #5A6770;
 }
 
-body.login-page {
-  /* background: url("../img/backgound.png") no-repeat fixed center;
-		background-size: 100%; */
-  background-color: #5A6770;
+.main-header .logo {
+  font-size: 18px;
+  font-family: cursive;
 }
 
 .bg-primary1,

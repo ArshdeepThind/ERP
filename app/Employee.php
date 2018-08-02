@@ -19,7 +19,7 @@ class Employee extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'first_name','last_name','phone_number','gender','marital_status','city','state','country','address1','address2','zipcode','joining_date','date_of_birth','current_salary','gross_salary','loan_amount','email', 'password',
     ];
 
     /**
@@ -31,6 +31,23 @@ class Employee extends Authenticatable
         'password', 'remember_token',
     ];
 
+
+    public function jobs(){
+        return $this->belongsToMany('App\Job')->withPivot('start_date','end_date');
+    }
+
+    public function history(){
+        return $this->hasMany(Payment::class);
+    }
+
+    public function in_process_salary(){
+        return $this->history()->where('is_paid','=','process');
+    }
+
+
+    public function paid_history(){
+        return $this->history()->where('is_paid','=','paid');
+    }
     /**
      * Send the password reset notification.
      *

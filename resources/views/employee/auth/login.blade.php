@@ -1,68 +1,57 @@
 @extends('employee.layout.auth')
-
 @section('content')
-<div class="container">
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2">
-            <div class="panel panel-default">
-                <div class="panel-heading">Login</div>
-                <div class="panel-body">
-                    <form class="form-horizontal" role="form" method="POST" action="{{ url('/employee/login') }}">
+        <div class="login-box">
+            <!-- /.login-logo -->
+            <div class="login-header text-center">
+                <h2><b>EMPLOYEE LOGIN</b></h2>
+            </div>
+                   
+            <component is='auth-validate' inline-template>
+                <div class="login-box-body">
+                    <h4 class="content-group">ERP LOGIN FORM</h4>
+                    <form role="form" method="POST" action="{{ url('/employee/login') }}">
                         {{ csrf_field() }}
-
-                        <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
-                            <label for="email" class="col-md-4 control-label">E-Mail Address</label>
-
-                            <div class="col-md-6">
-                                <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" autofocus>
-
-                                @if ($errors->has('email'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('email') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
+                        <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }} input-with-icon " >
+                            <input id="email" type="email" :class="mailClasses" name="email" value="{{ old('email') }}" autofocus placeholder="Username (Email)" v-model="email">
+                              <div class="form-control-feedback">
+                                <i class="fa fa-user text-muted"></i>
+                              </div>
+                            @if ($errors->has('email'))
+                                <span class="help-block">
+                                    <strong>{{ $errors->first('email') }}</strong>
+                                </span>
+                            @endif
                         </div>
-
-                        <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
-                            <label for="password" class="col-md-4 control-label">Password</label>
-
-                            <div class="col-md-6">
-                                <input id="password" type="password" class="form-control" name="password">
-
-                                @if ($errors->has('password'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('password') }}</strong>
-                                    </span>
-                                @endif
+                        <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }} input-with-icon">
+                            <input id="password" type="password" class="form-control" name="password" placeholder="Password" v-model='password'>
+                            <div class="form-control-feedback">
+                                <i class="fa fa-lock text-muted"></i>
                             </div>
+                            @if ($errors->has('password'))
+                                <span class="help-block">
+                                    <strong>{{ $errors->first('password') }}</strong>
+                                </span>
+                            @endif
                         </div>
-
-                        <div class="form-group">
-                            <div class="col-md-6 col-md-offset-4">
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" name="remember"> Remember Me
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-md-8 col-md-offset-4">
-                                <button type="submit" class="btn btn-primary">
-                                    Login
-                                </button>
-
+                        <div class="row">
+                            <div class="col-xs-12 text-center">
                                 <a class="btn btn-link" href="{{ url('/employee/password/reset') }}">
                                     Forgot Your Password?
-                                </a>
+                                </a>    
+                            </div>
+                            <!-- /.col -->
+                        </div>
+                       
+                        <div class="row">     
+                            <div class="col-xs-12">
+                                  <button type="submit" class="btn btn-danger btn-block btn-material" :disabled="hideLoginSubmit">LOGIN</button>
                             </div>
                         </div>
                     </form>
+                    <!-- /.social-auth-links -->
+                    
                 </div>
-            </div>
+            </component>
+            <!-- /.login-box-body -->
         </div>
-    </div>
-</div>
 @endsection

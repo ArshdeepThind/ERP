@@ -16,7 +16,7 @@
                 email:'',
                 password:'',
                 authUser:{
-                    name:'',
+                    first_name:'',
                     email:""
                 }
             };

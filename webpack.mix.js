@@ -1,5 +1,6 @@
 const { mix } = require('laravel-mix');
 
+
 /*
  |--------------------------------------------------------------------------
  | Mix Asset Management
@@ -15,6 +16,10 @@ const { mix } = require('laravel-mix');
 mix.js('resources/assets/js/app.js', 'public/js')
    .sass('resources/assets/sass/app.scss', 'public/css')
    .sass('resources/assets/admin/app.scss','public/css/admin-app.css')
+   .sass('resources/assets/employee/app.scss','public/css/employee-app.css')
+   .options({
+    processCssUrls: false
+   })
    .js('resources/assets/admin/js/main-buid.js','public/js/admin-main.js')
    .scripts([
         	'public/plugins/slimScroll/jquery.slimscroll.min.js',

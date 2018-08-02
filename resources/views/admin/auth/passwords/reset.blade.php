@@ -5,16 +5,17 @@
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <div class="login-box" id="app">
-                <div class="login-logo">
-                    <a href="#"><img src="{{ asset('/images/logo.png') }}" style="height: 150px"></a>
-                </div>
-
+                
+                
                 <div class="login-box-body">
+                    <div class="login-logo">
+                         <a href="#"><img src="{{ asset('/images/logo.png') }}" style="height: 100px"></a>
+                    </div>
                     <form class="form-horizontal" role="form" method="POST" action="{{ url('/admin/password/reset') }}">
                         {{ csrf_field() }}
 
                         <input type="hidden" name="token" value="{{ $token }}">
-
+                        
                         <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
                             <label for="email" class="col-md-4 control-label">Email</label>
 
@@ -43,7 +44,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group{{ $errors->has('password_confirmation') ? ' has-error' : '' }}">
+                    <div class="form-group{{ $errors->has('password_confirmation') ? ' has-error' : '' }}">
                             <label for="password-confirm" class="col-md-4 control-label">Confirm Password</label>
                             <div class="col-md-8">
                                 <input id="password-confirm" type="password" class="form-control" name="password_confirmation">
@@ -54,7 +55,7 @@
                                     </span>
                                 @endif
                             </div>
-                        </div>
+                    </div>
 
                         <div class="form-group">
                             <div class="col-md-6 col-md-offset-4">

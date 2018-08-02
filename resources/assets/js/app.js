@@ -6,9 +6,9 @@
  */
 
 require('./bootstrap');
-
 window.Vue = require('vue');
 
+//var autoprefixer = require('autoprefixer');
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -21,33 +21,27 @@ Vue.component('alert', require('./components/Alert.vue'));
 Vue.component('AuthValidate', require('./components/AuthValidation.vue'));
 Vue.component('ImgFileinput', require('./components/ImgFileinput.vue'));
 
-
 Vue.component('roles', require('./components/admin/Roles.vue'));
 Vue.component('permissions', require('./components/admin/Permissions.vue'));
 Vue.component('assign-permission', require('./components/admin/AssignPermission.vue'));
 Vue.component('administrator', require('./components/admin/Administrator.vue'));
+Vue.component('users', require('./components/admin/Users.vue'));
 
-Vue.component('CsmPages', require('./components/admin/CmsPages.vue'));
-Vue.component('CmsCategory', require('./components/admin/CmsCategory.vue'));
-Vue.component('AddCategory', require('./components/admin/AddCategory.vue'));
-Vue.component('AddSubcategory', require('./components/admin/AddSubcategory.vue'));
-Vue.component('CmsSubcategory', require('./components/admin/CmsSubcategory.vue'));
-Vue.component('Users', require('./components/admin/Users.vue'));
-Vue.component('AddUser', require('./components/admin/AddUser.vue'));
-Vue.component('AddCompany', require('./components/admin/AddCompany.vue'));
-Vue.component('dc', require('./components/admin/dc.vue'));
-Vue.component('handyman', require('./components/admin/handyman.vue'));
-Vue.component('AddHandyman', require('./components/admin/AddHandyman.vue'));
-Vue.component('Cars', require('./components/admin/Cars.vue'));
-Vue.component('drivers', require('./components/admin/drivers.vue'));
-Vue.component('handymans', require('./components/admin/handymans.vue'));
-Vue.component('AddDriver', require('./components/admin/AddDriver.vue'));
-Vue.component('AddHandy', require('./components/admin/AddHandy.vue'));
+Vue.component('chat', require('./components/employee/Chat.vue'));
+Vue.component('employees', require('./components/employee/Employees.vue'));
+Vue.component('jobs', require('./components/employee/Jobs.vue'));
+Vue.component('add-employee', require('./components/employee/AddEmployee.vue'));
+Vue.component('employee-leaves', require('./components/employee/EmployeeLeaves.vue'));
+Vue.component('leaves', require('./components/employee/Leaves.vue'));
+Vue.component('payment', require('./components/employee/Payment.vue'));
+Vue.component('payment-history', require('./components/employee/PaymentHistory.vue'));
+Vue.component('employee-attendence', require('./components/employee/EmployeeAttendence.vue'));
 
+Vue.component('products', require('./components/inventory/Products.vue'));
+Vue.component('supplier', require('./components/inventory/Supplier.vue'));
+Vue.component('orders', require('./components/inventory/Orders.vue'));
 
 Vue.prototype.$http = axios;
-
-
 
 window.Event= new class{
     constructor(){
@@ -64,5 +58,65 @@ window.Event= new class{
 }
 
 const app = new Vue({
-    el: '#app'
+    el: '#app',
+
+    data: {
+        chat_data_parent: {
+            chat_employeelist: [],
+            flag_load_chat: 1
+        }
+    },
+
+    mounted() {
+        this.LoadChatCaselist();
+    },
+
+    methods: {
+
+        LoadChatCaselist() {
+            const vm = this;
+
+            firebase.database().ref("RECENTCHAT/" + window.Laravel.login_user_id).on("value", function(snapshot) {
+                    
+                    let tmp_chat_employeelist = [];
+                    let chat_badgeCount = 0;
+
+                    if (snapshot.val()) {
+                        let datalist = snapshot.val();
+
+                        _.each(datalist, function(element, key) {
+                            tmp_chat_employeelist.push({
+                                'badgeCount': element.badgeCount,
+                                'conversation_id': element.conversation_id,
+                                'senderID': element.senderID, 
+                                'senderName': element.senderName,
+                                'receiverID': element.senderID, 
+                                'receiverName': element.receiverName,
+                                'messageType': element.messageType,
+                                'messageText': element.messageText,
+                                'timestamp': element.timestamp
+                            });
+
+                            chat_badgeCount += element.badgeCount;
+                        });
+                    }
+                    if (chat_badgeCount > 0) {
+                        $("#chat_badgeCount").show();
+                    } else {
+                        $("#chat_badgeCount").hide();
+                    }
+                    $("#chat_badgeCount").html(chat_badgeCount);
+
+                    vm.chat_data_parent.chat_employeelist = tmp_chat_employeelist.sort(function(a, b) {
+                        if (a.timeStamp < b.timeStamp)
+                            return 1;
+                        if (a.timeStamp > b.timeStamp)
+                            return -1;
+                        return 0;
+                    });
+
+                    vm.chat_data_parent.flag_load_chat = 0;
+                });
+        }
+    }
 });

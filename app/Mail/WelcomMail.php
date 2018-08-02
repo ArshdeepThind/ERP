@@ -6,13 +6,13 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use App\User;
+use App\Employee;
 
 class WelcomMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    protected $user; 
+    protected $employee; 
     protected $password;
 
     /**
@@ -20,9 +20,9 @@ class WelcomMail extends Mailable
      *
      * @return void
      */
-    public function __construct(User $user,$setPassword)
+    public function __construct(Employee $employee,$setPassword)
     {
-        $this->user = $user;
+        $this->employee = $employee;
         $this->password = $setPassword;
     }
 
@@ -33,6 +33,6 @@ class WelcomMail extends Mailable
      */
     public function build()
     {
-        return $this->markdown('emails.users.welcommail')->with(['firstname' => $this->user->firstname,'email'=> $this->user->email,'password' => $this->password]);
+        return $this->markdown('emails.users.welcommail')->with(['firstname' => $this->employee->first_name,'email'=> $this->employee->email,'password' => $this->password]);
     }
 }

@@ -69,4 +69,27 @@ export default class ConfirmBox{
       }
     });
   }
+
+  bulkUpdateBox(slug,text){
+    let self=this.ref;
+    swal({
+      title: "Are you sure?",
+      text: text,
+      type: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#DD6B55",
+      confirmButtonText: "Yes, update all!",
+      cancelButtonText: "No, cancel!",
+      closeOnConfirm: false,
+      closeOnCancel: false
+    },
+    function(isConfirm){
+      if (isConfirm) {
+        self.updateMultiple();
+        swal("Updated!", `Your selected ${slug} has been updated.`, "success");
+      } else {
+        swal("Cancelled", `Your selected ${slug} are not updated :)`, "error");
+      }
+    });
+  }
 }

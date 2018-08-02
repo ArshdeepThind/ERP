@@ -12,23 +12,18 @@
 @import "tables";
 
 html, body {
-    /* background-color: #fff;
-    color: #636b6f;
-    font-family: 'Raleway', sans-serif;
-    font-weight: 100;
-    height: 100vh;
-    margin: 0; */
-    // background-color:red;
 }
 
 body{
 	&.login-page{
-		/* background: url("../img/backgound.png") no-repeat fixed center;
-		background-size: 100%; */
         background-color:#5A6770;
-		//@include linear-gradient(to right, #E0D5A8 2%, #5A6770 100%);
+    }
+}
 
-	}
+
+.main-header .logo{
+    font-size:18px;
+    font-family:cursive;
 }
 
 .bg-primary1,

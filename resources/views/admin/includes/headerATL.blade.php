@@ -1,7 +1,7 @@
 <header class="main-header">
   <!-- Logo -->
-  <a href="{{ url('/admin') }}" class="logo">
-    <span class="logo-lg">Laravel</span>
+  <a href="{{ url('/admin/administrator') }}" class="logo">
+    <span class="logo-lg">ERP ADMIN</span>
   </a>
   <!-- Header Navbar: style can be found in header.less -->
   <nav class="navbar navbar-static-top">

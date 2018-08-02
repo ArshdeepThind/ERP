@@ -8,10 +8,11 @@
 
 
             <div class="login-box" id="app">
-                <div class="login-logo">
-                    <a href="#"><img src="{{ asset('/images/logo.png') }}" style="height: 150px"></a>
-                </div>
+                
                 <div class="login-box-body">
+                    <div class="login-logo">
+                         <a href="#"><img src="{{ asset('/images/logo.png') }}" style="height: 100px"></a>
+                    </div>
                     <p class="login-box-msg">Enter Email to Reset Password</p>            
                         @if (session('status'))
                             <div class="alert alert-success">
@@ -27,7 +28,7 @@
                                 <span class="glyphicon glyphicon-envelope input-span-icon"></span>
                                 @if ($errors->has('email'))
                                     <span class="help-block">
-                                        <strong>{{ $errors->first('email') }}</strong>
+                                    <strong>{{ $errors->first('email') }}</strong>
                                     </span>
                                 @endif
                             </div>

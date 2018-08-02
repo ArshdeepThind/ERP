@@ -2,7 +2,7 @@
   "_args": [
     [
       "intl-tel-input@11.1.6",
-      "C:\\xampp\\htdocs\\ERP"
+      "E:\\erp"
     ]
   ],
   "_from": "intl-tel-input@11.1.6",
@@ -26,7 +26,7 @@
   ],
   "_resolved": "https://registry.npmjs.org/intl-tel-input/-/intl-tel-input-11.1.6.tgz",
   "_spec": "11.1.6",
-  "_where": "C:\\xampp\\htdocs\\ERP",
+  "_where": "E:\\erp",
   "author": {
     "name": "Jack O'Connor",
     "url": "http://jackocnr.com"

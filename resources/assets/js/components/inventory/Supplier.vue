@@ -222,7 +222,7 @@
                 this.resetAlert();
                 var index = this.componentData.indexOf(obj);
                 this.componentData.splice(index, 1);
-                let uri=`/employee/supplier/${obj.id}`;
+                let uri=`/employee/supplier/${obj.supplier_id}`;
                 this.$http.delete(uri).then((response)=>{
                     let res= response.data;
                     if(res.status_code==200){
@@ -260,7 +260,7 @@
                 }
             },
             update(){
-                let uri=`/employee/supplier/${this.singleObj.id}`;
+                let uri=`/employee/supplier/${this.singleObj.supplier_id}`;
                 this.$http.put(uri,this.singleObj).then((response)=>{
                     let res= response.data;
                     if(res.status_code==200){

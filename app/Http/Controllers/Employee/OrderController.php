@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Employee;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Orders;
 
 class OrderController extends Controller
 {
@@ -19,18 +20,18 @@ class OrderController extends Controller
             $order= request()->has('order')?request()->get('order'):'asc';
             $search= request()->has('searchQuery')?request()->get('searchQuery'):'';
             
-            $pdt= \DB::table('products')->select('products.*')
+            $order= \DB::table('orders')->select('orders.*')
                 ->orderBy("$sort", "$order")
                 ->paginate(10);
             
             $paginator=[
-                'total_count'  => $pdt->total(),
-                'total_pages'  => $pdt->lastPage(),
-                'current_page' => $pdt->currentPage(),
-                'limit'        => $pdt->perPage()
+                'total_count'  => $order->total(),
+                'total_pages'  => $order->lastPage(),
+                'current_page' => $order->currentPage(),
+                'limit'        => $order->perPage()
             ];
             return response([
-                "data"        =>    $pdt->all(),
+                "data"        =>    $order->all(),
                 "paginator"   =>    $paginator,
                 "status_code" =>    200
             ],200);
@@ -65,19 +66,24 @@ class OrderController extends Controller
             'quantity_total' => 'required',
             
         ]);
-        
         if ($validator->fails()) {
-
-            // /echo "here"; exit;
             flash(trans('messages.parameters-fail-validation'),'danger');
             return back()->withErrors($validator)->withInput();
         }
         else{
             $input = array_only($request->all(),["product_id","supplier_id","quantity_total"]);
-            $orders = Orders::create($input);   
-            
+            $order = Orders::create($input);
+
         }
-        return back()->with('success', 'Order added successfully!!');
+
+        if($request->wantsJson()){
+            return response([
+                "message"     =>trans('Order added successfully!!'),
+                "status_code" =>201
+            ],201);
+        }
+        flash(trans('Order added successfully!!'),'success');
+        return back();
     }
 
     /**
@@ -125,20 +131,23 @@ class OrderController extends Controller
             flash(trans('messages.parameters-fail-validation'),'danger');
             return back()->withErrors($validator)->withInput();
         }
-        else{
-            
+
          // SET AND UPDATE
-    
+        extract($request->all());
         $order->product_id   = $product_id;
         $order->supplier_id  =  $supplier_id;
         $order->quantity_total =  $quantity_total;
         $order->save();
-            
-     
-        
+
+        if($request->wantsJson()){
+            return response([
+                "message"     =>trans('Order details updated successfully!!'),
+                "status_code" =>201
+            ],201);
         }
-        return back()->with('success', 'Order details updated successfully!!');
-    
+        flash(trans('Order details updated successfully!!'),'success');
+        return back();
+
 
     }
 
@@ -148,8 +157,14 @@ class OrderController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($order_id)
     {
-        //
+        $order=Orders::findOrFail($order_id);
+        $order->delete();
+    }
+    public function removeBulkConfirm($product_id)
+    {
+        $order=Orders::findOrFail($order_id);
+        $order->delete();
     }
 }

@@ -43,7 +43,7 @@
                   <td v-text="runningData.order_id"></td>
                   <td v-text="runningData.supplier_id"></td>
                   <td v-text="runningData.quantity_total"></td>
-                  <td v-text="runningData.order_date"></td>
+                  <td v-text="runningData.created_at"></td>
 
 
                   <td>
@@ -142,7 +142,7 @@
                 alertType:'',
                 alertText:'',
                 // Component
-                gridColumns:['Product Id','Order Id','Supplier Id','Quantity Total','Date'],
+                gridColumns:['Product Id','Order Id','Supplier Id','Quantity Total','Date & Time'],
                 escapeSort:['Action'],
                 gridAction:[
                     {title:'edit',fire:"edit"},
@@ -150,7 +150,7 @@
                     {title:'force',fire:"force"}
                 ],
                 searchQuery:'',
-                sortOrder:{field:'product_price',order:'asc'},
+                sortOrder:{field:'quantity_total',order:'desc'},
 
                 // Module Specific
                 roleSelected:'',
@@ -220,7 +220,7 @@
                 this.resetAlert();
                 var index = this.componentData.indexOf(obj);
                 this.componentData.splice(index, 1);
-                let uri=`/employee/orders/${obj.id}`;
+                let uri=`/employee/orders/${obj.order_id}`;
                 this.$http.delete(uri).then((response)=>{
                     let res= response.data;
                     if(res.status_code==200){
@@ -258,7 +258,7 @@
                 }
             },
             update(){
-                let uri=`/employee/orders/${this.singleObj.id}`;
+                let uri=`/employee/orders/${this.singleObj.order_id}`;
                 this.$http.put(uri,this.singleObj).then((response)=>{
                     let res= response.data;
                     if(res.status_code==200){

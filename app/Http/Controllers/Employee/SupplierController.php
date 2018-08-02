@@ -16,22 +16,22 @@ class SupplierController extends Controller
     public function index()
     {
         if(request()->ajax() || request()->wantsJson()){
-            $sort= request()->has('sort')?request()->get('sort'):'supplier_name';
+            $sort= request()->has('sort')?request()->get('sort'):'name';
             $order= request()->has('order')?request()->get('order'):'asc';
             $search= request()->has('searchQuery')?request()->get('searchQuery'):'';
             
-            $pdt= \DB::table('supplier')->select('supplier.*')
+            $supplier= \DB::table('supplier')->select('supplier.*')
                 ->orderBy("$sort", "$order")
                 ->paginate(10);
             
             $paginator=[
-                'total_count'  => $pdt->total(),
-                'total_pages'  => $pdt->lastPage(),
-                'current_page' => $pdt->currentPage(),
-                'limit'        => $pdt->perPage()
+                'total_count'  => $supplier->total(),
+                'total_pages'  => $supplier->lastPage(),
+                'current_page' => $supplier->currentPage(),
+                'limit'        => $supplier->perPage()
             ];
             return response([
-                "data"        =>    $pdt->all(),
+                "data"        =>    $supplier->all(),
                 "paginator"   =>    $paginator,
                 "status_code" =>    200
             ],200);
@@ -65,17 +65,25 @@ class SupplierController extends Controller
             'supplier_name'  => 'required|max:100',
             'supplier_category' => 'required',
         ]);
-        
-        if ($validator->fails()) {
 
+        if ($validator->fails()) {
             flash(trans('messages.parameters-fail-validation'),'danger');
             return back()->withErrors($validator)->withInput();
         }
         else{
             $input = array_only($request->all(),["product_id","supplier_name","supplier_category"]);
-            $products = Supplier::create($input);   
-            return back()->with('success', 'Supplier added successfully!!');
+            $supplier = Supplier::create($input);
+
         }
+
+        if($request->wantsJson()){
+            return response([
+                "message"     =>trans('Supplier added successfully!!'),
+                "status_code" =>201
+            ],201);
+        }
+        flash(trans('Supplier added successfully!!'),'success');
+        return back();
     }
 
     /**
@@ -122,14 +130,21 @@ class SupplierController extends Controller
             flash(trans('messages.parameters-fail-validation'),'danger');
             return back()->withErrors($validator)->withInput();
         }
-        else{
-            
+        extract($request->all());
             $supplier->product_id = $product_id;
             $supplier->supplier_name  = $supplier_name;
             $supplier->supplier_category = $supplier_category;
             $supplier->save();
+
+        if($request->wantsJson()){
+            return response([
+                "message"     =>trans('Supplier details updated successfully!!'),
+                "status_code" =>201
+            ],201);
         }
-        return back()->with('success', 'Supplier details updated successfully!!');
+        flash(trans('Supplier details updated successfully!!'),'success');
+        return back();
+
     }
 
     /**
@@ -138,8 +153,14 @@ class SupplierController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($supplier_id)
     {
-        //
+        $supplier=Supplier::findOrFail($supplier_id);
+        $supplier->delete();
+    }
+    public function removeBulkConfirm($supplier_id)
+    {
+        $supplier=Supplier::findOrFail($supplier_id);
+        $supplier->delete();
     }
 }

@@ -8,7 +8,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="{{route('product.index')}}">CRM</a>
+            <a class="navbar-brand" href="{{route('product.index')}}">ERP System</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -16,7 +16,7 @@
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="{{route('product.shoppingCart')}}">
                   <i class="fa fa-shopping-cart" aria-hidden="true"></i> Shopping Cart
-                  <span class="badge"> {{Session::has('cart') ? Session::get('cart')->totalQty : '' }}
+                  <span class="badge"> {{Session::has('cart') ? Session::get('cart')->totalQty : 0 }}
                 </span>
                 </a></li>
                 <li class="dropdown">

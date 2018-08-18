@@ -289,6 +289,8 @@
                 }
             },
             update(){
+
+              console.log('here');
                 let uri=`/employee/products/${this.singleObj.product_id}`;
                 this.$http.put(uri,this.singleObj).then((response)=>{
                     let res= response.data;
@@ -408,13 +410,7 @@
         },
         computed:{
             isNotValidateForm(){
-                if(this.singleObj.name=="" 
-                    || this.singleObj.email=='' 
-                    || funcHelp.validateEmail(this.singleObj.email)==false)
-                {
-                    return true;
-                }
-                return false;
+                return true;
             }
         },
         filters: {

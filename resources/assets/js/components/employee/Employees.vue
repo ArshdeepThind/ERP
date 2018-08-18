@@ -42,7 +42,7 @@
                     <td v-text="runningData.last_name"></td>
                     <td v-text="runningData.email"></td>
                     <td v-text="runningData.phone_number"></td>
-                    <td v-text="runningData.current_salary"></td>
+                    <td>${{runningData.current_salary}}</td>
                     <td>
                     <div class="" role="group" aria-label="...">
                        <a type="button" class="btn btn-primary btn-round" :href="'employees/'+runningData.id+'/edit'">

@@ -11,6 +11,7 @@ class UserController extends Controller
 {
     public function getSignup()
     {
+      //echo "fs"; exit;
       return view('user.signup');
     }
 

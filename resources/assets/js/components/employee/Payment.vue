@@ -38,7 +38,7 @@
                     <td v-text="runningData.first_name"></td>
                     <td v-text="runningData.last_name"></td>
                     <td v-text="runningData.email"></td>
-                    <td v-text="runningData.in_process_salary[0].net_salary"></td>
+                    <td>${{runningData.in_process_salary[0].net_salary}}</td>
                     <td v-text= "runningData.in_process_salary[0].month_salary"></td>
                     <td v-text= "runningData.in_process_salary[0].year_salary"></td>
                     <td v-text= "runningData.in_process_salary[0].total_days_worked"></td>

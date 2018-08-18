@@ -19,13 +19,13 @@
         @foreach($productChunk as $product)
         <div class="col-sm-6 col-md-4">
             <div class="thumbnail">
-                <img src="{{ $product->imagePath }}" alt="..." class="img-responsive">
+                <img src="{{ $product->product_image }}" alt="..." class="img-responsive">
                 <div class="caption">
-                    <h3>{{ $product->title }}</h3>
+                    <h3>{{ $product->product_name }}</h3>
                     <p class="description">{{ $product->description }}</p>
                     <div class="clearfix">
-                        <div class="pull-left price">${{ $product->price }}</div>
-                        <a href="{{ route('product.addToCart',['id' => $product->id])}}" class="btn btn-success pull-right" role="button">Add to Cart</a>
+                        <div class="pull-left price">${{ $product->product_price }}</div>
+                        <a href="{{ route('product.addToCart',['id' => $product->product_id])}}" class="btn btn-success pull-right" role="button">Add to Cart</a>
                     </div>
                 </div>
             </div>

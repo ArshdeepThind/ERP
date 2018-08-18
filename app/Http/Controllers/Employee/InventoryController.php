@@ -75,11 +75,13 @@ class InventoryController extends Controller
             flash(trans('messages.parameters-fail-validation'),'danger');
             return back()->withErrors($validator)->withInput();
         }
-        else{
-            $input = array_only($request->all(),["product_name","product_price","quantity_initial","quantity_shipped","quantity_left","product_category","gender"]);
-            $products = Products::create($input);   
-            
-        }
+        
+        $input = array_only($request->all(),["product_name","product_price","quantity_initial","quantity_shipped","quantity_left","product_category","gender"]);
+        $input['product_image'] = "https://images.yourstory.com/2016/08/125-fall-in-love.png?auto=compress";
+        $input['description'] = "Li Europan lingues es membres del sam familie. Lor separat existentie es un myth. Por scientie, musica, sport etc, litot Europa usa li sam vocabular. Li lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules. Omnicos directe al desirabilite de un nov lingua franca: On refusa continuar payar custosi traductores. At solmen va esser necessi far uniform grammatica, pronunciation e plu sommun paroles.";
+        $products = Products::create($input);   
+        
+        
 
         if($request->wantsJson()){
             return response([
@@ -125,11 +127,11 @@ class InventoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $product_id)
+    public function update(Request $request, $id)
     {
-        $pdt=Products::findOrFail($product_id);
+        $pdt = Products::findOrFail($id);
         $validator = validator()->make($request->all(), [
-            'product_name'   =>'required|max:100|unique:products',
+            'product_name'   =>'required',
             'product_price'  => 'required',
             'quantity_initial' => 'required',
             'quantity_shipped' => 'required',
@@ -139,8 +141,6 @@ class InventoryController extends Controller
         ]);
         
         if ($validator->fails()) {
-
-            // /echo "here"; exit;
             flash(trans('messages.parameters-fail-validation'),'danger');
             return back()->withErrors($validator)->withInput();
         }

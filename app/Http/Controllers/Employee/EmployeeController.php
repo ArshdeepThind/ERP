@@ -312,10 +312,15 @@ class EmployeeController extends Controller
         $input['date_of_birth'] = $request->get('dob');
         $input['password']  = bcrypt($setPassword);
         
-        $employee = $this->employee->create($input);
+        
 
         $job_id = $request->get('job');
+
+        $jobobj = Job::find($job_id);
+        $input['remaining_leaves'] = $jobobj->yearly_leaves;
         
+        $employee = $this->employee->create($input);
+
         $start_date = date('Y-m-d');
         $employee->jobs()->attach($job_id,['start_date' => $start_date]);
 

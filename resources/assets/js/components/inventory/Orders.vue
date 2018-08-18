@@ -43,7 +43,7 @@
                   <td v-text="runningData.order_id"></td>
                   <td v-text="runningData.supplier_id"></td>
                   <td v-text="runningData.quantity_total"></td>
-                  <td v-text="runningData.created_at"></td>
+                  <td v-text="runningData.order_date"></td>
 
 
                   <td>

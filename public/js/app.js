@@ -68951,11 +68951,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       domProps: {
         "textContent": _vm._s(runningData.phone_number)
       }
-    }), _vm._v(" "), _c('td', {
-      domProps: {
-        "textContent": _vm._s(runningData.current_salary)
-      }
-    }), _vm._v(" "), _c('td', [_c('div', {
+    }), _vm._v(" "), _c('td', [_vm._v("$" + _vm._s(runningData.current_salary))]), _vm._v(" "), _c('td', [_c('div', {
       attrs: {
         "role": "group",
         "aria-label": "..."
@@ -72237,11 +72233,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       domProps: {
         "textContent": _vm._s(runningData.email)
       }
-    }), _vm._v(" "), _c('td', {
-      domProps: {
-        "textContent": _vm._s(runningData.in_process_salary[0].net_salary)
-      }
-    }), _vm._v(" "), _c('td', {
+    }), _vm._v(" "), _c('td', [_vm._v("$" + _vm._s(runningData.in_process_salary[0].net_salary))]), _vm._v(" "), _c('td', {
       domProps: {
         "textContent": _vm._s(runningData.in_process_salary[0].month_salary)
       }
@@ -76565,7 +76557,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       }
     }), _vm._v(" "), _c('td', {
       domProps: {
-        "textContent": _vm._s(runningData.created_at)
+        "textContent": _vm._s(runningData.order_date)
       }
     }), _vm._v(" "), _c('td', [_c('div', {
       attrs: {

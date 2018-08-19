@@ -50,12 +50,12 @@
     <script>
             
      var config = {
-        apiKey: "AIzaSyCLlBNpd0PG61yMWBBnhQk0j5afj6S7onE",
-        authDomain: "erpsystem-2f85e.firebaseapp.com",
-        databaseURL: "https://erpsystem-2f85e.firebaseio.com",
-        projectId: "erpsystem-2f85e",
-        storageBucket: "erpsystem-2f85e.appspot.com",
-        messagingSenderId: "136245962846"
+        apiKey: "key",
+        authDomain: "domain",
+        databaseURL: "url",
+        projectId: "erpsystem",
+        storageBucket: "erpsystem",
+        messagingSenderId: ""
       };
       
     firebase.initializeApp(config);

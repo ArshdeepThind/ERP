@@ -12,7 +12,7 @@ class AdminSeeder extends Seeder
     public function run()
     {
          DB::table('admins')->insert([
-            'name'     => "Openxcell",
+            'name'     => "admin",
             'email'    => "abc@gmail.com",
             'password' => bcrypt('password')
         ]);

@@ -13,8 +13,8 @@ class AdminSeeder extends Seeder
     {
          DB::table('admins')->insert([
             'name'     => "Openxcell",
-            'email'    => "nirali@gmail.com",
-            'password' => bcrypt('123456')
+            'email'    => "abc@gmail.com",
+            'password' => bcrypt('password)
         ]);
     }
 }
